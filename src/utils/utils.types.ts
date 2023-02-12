@@ -1,6 +1,35 @@
-interface Token {
+enum transactionType {
+  DEPOSIT = 'DEPOSIT',
+  WITHDRAWAL = 'WITHDRAWAL',
+}
+
+type Token = {
   timestamp: number;
-  transactionType: string;
+  transaction_type: transactionType;
   token: string;
   amount: number;
-}
+};
+
+type TokenValue = {
+  token: string;
+
+  price: number;
+
+  timestamp: number;
+};
+
+type CMDParams = {
+  token?: string;
+  date?: number;
+  file: string;
+
+  apiKey: string;
+  currency: string;
+};
+
+type apiConfig = {
+  apiKey: string;
+  currency: string;
+};
+
+export {Token, CMDParams, TokenValue, transactionType, apiConfig};
