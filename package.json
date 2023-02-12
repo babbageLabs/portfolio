@@ -26,7 +26,8 @@
     "prepare": "yarn.cmd run compile",
     "pretest": "yarn.cmd run compile",
     "posttest": "yarn.cmd run lint",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "test": "jest"
   },
   "dependencies": {
     "@types/node-fetch": "^2.6.2",

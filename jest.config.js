@@ -1,11 +1,9 @@
-/** @type {import('ts-jest').JestConfigWithTsJest} */
+const esModules = ['@jest'].join('|');
+
 module.exports = {
-  preset: 'ts-jest',
+  transform: {'^.+\\.ts?$': 'ts-jest'},
+  transformIgnorePatterns: [`node_modules/(?!${esModules}/)`],
   testEnvironment: 'node',
-  compilerOptions: {
-    baseUrl: '.',
-    paths: {
-      '@App/*': ['src/*'],
-    },
-  },
+  testRegex: '/tests/.*\\.(test|spec)?\\.(ts|tsx)$',
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 };
