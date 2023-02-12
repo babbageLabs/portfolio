@@ -1,5 +1,11 @@
 import {Transform, TransformCallback} from 'stream';
-import {apiConfig, Token, TokenValue, transactionType} from './utils.types';
+import {
+  apiConfig,
+  apiResponse,
+  Token,
+  TokenValue,
+  transactionType,
+} from './utils.types';
 import fetch from 'node-fetch';
 
 class PortfolioValue extends Transform {
@@ -31,7 +37,7 @@ class PortfolioValue extends Transform {
 
   _flush(next: TransformCallback) {
     console.log(
-      `Computing your portfolio value. Please wait as we fetch some data`
+      'Computing your portfolio value. Please wait as we fetch some data'
     );
     Promise.all(this.jobQueue).then(() => {
       return next(null, this.summary);
@@ -71,11 +77,7 @@ class PortfolioValue extends Transform {
         authorization: `Apikey ${this.apiConfig.apiKey}`,
       },
     });
-    const data: {
-      [key: string]: {
-        [key: string]: number;
-      };
-    } = await response.json();
+    const data: apiResponse = await response.json();
 
     this.priceCache[this.getCacheKey(value)] = {
       token: value.token,

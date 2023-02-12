@@ -4,6 +4,7 @@ import {CMDParams} from './utils/utils.types';
 import portfolioHandler, {
   getAPICurrency,
   getAPiKey,
+  getFileStream,
 } from './utils/utils.cmd.handler';
 import * as dotenv from 'dotenv';
 
@@ -23,7 +24,9 @@ portfolio
     args.apiKey = getAPiKey();
     args.currency = getAPICurrency();
 
-    await portfolioHandler(args);
+    const dataStream = getFileStream(args.file);
+
+    await portfolioHandler(dataStream, args);
   });
 
 portfolio.parse();

@@ -32,4 +32,10 @@ type apiConfig = {
   currency: string;
 };
 
-export {Token, CMDParams, TokenValue, transactionType, apiConfig};
+type apiResponse = {
+  [key: string]: {
+    [key: string]: number;
+  };
+};
+
+export {Token, CMDParams, TokenValue, transactionType, apiConfig, apiResponse};

@@ -1,1 +1,5 @@
 build/
+data/
+playwright-report/
+.github
+.idea

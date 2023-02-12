@@ -1,3 +1,20 @@
 {
-  "extends": "./node_modules/gts/"
+  "extends": "./node_modules/gts/",
+  "rules": {
+    "node/no-unpublished-import": ["error", {
+      "allowModules": [
+        "@playwright/test",
+        "playwright",
+        "csv-parse",
+        "csv-stringify"
+      ],
+      "convertPath": [
+        {
+          "include": ["src/**/*.js"],
+          "exclude": ["**/*.spec.js"],
+          "replace": ["^src/(.+)$", "lib/$1"]
+        }
+      ]
+    }]
+  }
 }
