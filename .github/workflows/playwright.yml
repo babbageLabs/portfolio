@@ -25,3 +25,78 @@ jobs:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
+
+  badge:
+
+    # Only generate and publish if these conditions are met:
+    # - The test step ended successfully
+    # - One of these is met:
+    #   - This is a pull request event and the pull actor is the same as the repo owner
+    #   - This is a push event and the push event is on branch 'master'
+    name: Generate badge image with test coverage value
+    needs: [test, pre_ci]
+    if: ${{ ( github.event_name == 'pull_request' && github.actor == github.repository_owner ) || github.ref == 'refs/heads/master' }}
+    outputs:
+      url: ${{ steps.url.outputs.url }}
+      markdown: ${{ steps.url.outputs.markdown }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: badges
+        path: badges
+
+    - name: Generate the badge SVG image
+      uses: emibcn/badge-action@v2.0.2
+      id: badge
+      with:
+        label: 'Coverage'
+        status: ${{ needs.test.outputs.coverage-rounded-display }}
+        color: ${{
+          needs.test.outputs.coverage > 90 && 'green'              ||
+          needs.test.outputs.coverage > 80 && 'yellow,green'       ||
+          needs.test.outputs.coverage > 70 && 'yellow'             ||
+          needs.test.outputs.coverage > 60 && 'orange,yellow'      ||
+          needs.test.outputs.coverage > 50 && 'orange'             ||
+          needs.test.outputs.coverage > 40 && 'red,orange'         ||
+          needs.test.outputs.coverage > 30 && 'red,red,orange'     ||
+          needs.test.outputs.coverage > 20 && 'red,red,red,orange' ||
+          'red' }}
+        path: badges/test-coverage.svg#
+
+    - name: Commit badge
+      env:
+        BRANCH: ${{ needs.pre_ci.outputs.branch }}
+        FILE: 'test-coverage.svg'
+      working-directory: ./badges
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        mkdir -p "${BRANCH}"
+        mv "${FILE}" "${BRANCH}"
+        git add "${BRANCH}/${FILE}"
+        # Will give error if badge did not changed
+        git commit -m "Add/Update badge" || true
+
+    - name: Push badge commit
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: badges
+        directory: badges
+
+
+    - name: Badge image URL
+      id: url
+      env:
+        BRANCH: ${{ needs.pre_ci.outputs.branch }}
+        FILE: 'test-coverage.svg'
+        COVERAGE: ${{ needs.test.outputs.coverage-rounded-display }}
+      run: |
+        URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/badges/${BRANCH}/${FILE}"
+        MARKDOWN="![Coverage ${COVERAGE}](${URL})"
+        echo "Badge URL: ${URL}"
+        echo "Badge image for Markdown: ${MARKDOWN}"
+        echo "##[set-output name=url;]${URL}"
+        echo "##[set-output name=markdown;]${MARKDOWN}"
+

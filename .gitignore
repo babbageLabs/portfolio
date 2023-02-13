@@ -16,3 +16,4 @@ src/**/*.js
 /test-results/
 /playwright-report/
 /playwright/.cache/
+.nyc_output
