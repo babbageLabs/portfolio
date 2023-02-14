@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
+//    "baseUrl": ".",
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
     "declaration": true,
@@ -11,17 +11,20 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "pretty": true,
+//    "skipLibCheck": true,
+//    "esModuleInterop": true,
+//    "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "strict": true,
     "target": "es2018",
-    "rootDir": "src",
+    "rootDir": ".",
     "outDir": "build",
     "types": ["node", "jest"],
     "moduleResolution": "node"
   },
   "include": [
     "src/**/*.ts",
-    "test/**/*.ts"
+    "tests/**/*.ts"
   ],
   "exclude": [
     "node_modules"

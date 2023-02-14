@@ -26,8 +26,9 @@
     "watch": "tsc -w src/index.ts",
     "fix": "gts fix",
     "start": "node src/index.js",
-    "test": "playwright test tests/",
-    "coverage": "nyc playwright test tests/"
+    "test": "playwright test",
+    "pretest": "rm -rf coverage/ .nyc_output/",
+    "coverage": "nyc playwright test tests/ && nyc report --reporter=lcov"
   },
   "dependencies": {
     "@types/node-fetch": "^2.6.2",

@@ -3,6 +3,11 @@
     "include": [
         "src/**/*.ts"
     ],
+    "exclude": [
+        "**/*.spec.js",
+        ".eslintrc.js",
+        ".prettierrc.js"
+    ],
     "all": true,
     "reporter": [
       "html", "text", "lcov"

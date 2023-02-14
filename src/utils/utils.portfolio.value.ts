@@ -17,7 +17,6 @@ class PortfolioValue extends Transform {
   constructor(api: apiConfig) {
     super({
       readableObjectMode: true,
-      writableObjectMode: true,
     });
 
     this.summary = {};
@@ -26,21 +25,14 @@ class PortfolioValue extends Transform {
     this.apiConfig = api;
   }
 
-  _transform(chunk: Token, encoding: BufferEncoding, next: TransformCallback) {
-    console.log(
-      `Computing your portfolio value. Records loaded ${this.jobQueue.length}}`
-    );
-    this.jobQueue.push(this.computeSummary(chunk));
-
+  _transform(chunk: string, encoding: BufferEncoding, next: TransformCallback) {
+    this.jobQueue.push(this.computeSummary(JSON.parse(chunk)));
     next();
   }
 
   _flush(next: TransformCallback) {
-    console.log(
-      'Computing your portfolio value. Please wait as we fetch some data'
-    );
     Promise.all(this.jobQueue).then(() => {
-      return next(null, this.summary);
+      return next(null, JSON.stringify(this.summary));
     });
   }
 
@@ -76,6 +68,8 @@ class PortfolioValue extends Transform {
       headers: {
         authorization: `Apikey ${this.apiConfig.apiKey}`,
       },
+    }).catch(err => {
+      throw new Error(err);
     });
     const data: apiResponse = await response.json();
 

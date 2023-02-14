@@ -7,15 +7,16 @@ class FilterData extends Transform {
     super({
       readableObjectMode: true,
       writableObjectMode: true,
+      objectMode: true,
+      encoding: 'utf8',
     });
 
     this.params = params;
   }
   _transform(chunk: Token, encoding: BufferEncoding, next: TransformCallback) {
     if (this.isValid(chunk)) {
-      return next(null, chunk);
+      this.push(JSON.stringify(chunk));
     }
-
     next();
   }
 

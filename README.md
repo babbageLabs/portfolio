@@ -28,10 +28,10 @@ A sample of the Portfolio data can be obtained here: [Portfolio Data](https://s3
 To get the API key, you can register for a free account at [Crypto Compare](https://min-api.cryptocompare.com/)
 
 # Usage
-Given no parameters, we get the latest portfolio value per token in USD
-Given a token, we get the latest portfolio value for that token in USD
-Given a date, we get the portfolio value per token in USD on that date
-Given a date and a token, we get the portfolio value of that token in USD on that date
+- Given no parameters, we get the latest portfolio value per token in USD
+- Given a token, we get the latest portfolio value for that token in USD
+- Given a date, we get the portfolio value per token in USD on that date
+- Given a date and a token, we get the portfolio value of that token in USD on that date
 
     Usage: portfolio [options]
 

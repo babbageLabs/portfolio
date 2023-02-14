@@ -25,19 +25,12 @@ const portfolioHandler = async (
     .pipe(parser)
     .pipe(new FilterData(params))
     .pipe(new PortfolioValue(params))
-    .on('data', parsed => {
-      console.log(parsed);
+    .on('data', (chunk: any) => {
+      console.log(chunk);
     });
 
-  dataStream.on('end', (chunk: any) => {
-    console.log(
-      '-------------------end of file reader -------------------------------------------------'
-    );
-    console.log(chunk);
-  });
-
   dataStream.on('error', err => {
-    console.log(err);
+    console.error(err);
   });
 };
 
