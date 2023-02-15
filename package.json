@@ -27,9 +27,9 @@
     "watch": "tsc -w src/index.ts",
     "fix": "gts fix",
     "start": "node src/index.js",
-    "test": "playwright test",
-    "pretest": "rm -rf coverage/ .nyc_output/",
-    "coverage": "cross-env NODE_ENV=test nyc playwright test && cross-env NODE_ENV=test nyc report --reporter=lcov"
+    "test": "cross-env NODE_ENV=test nyc playwright test",
+    "pretest": "npm run lint",
+    "coverage": "npm run test && cross-env NODE_ENV=test nyc report --reporter=lcov"
   },
   "dependencies": {
     "@types/node-fetch": "^2.6.2",
