@@ -13,6 +13,7 @@
     "csv-generate": "^4.2.2",
     "csv-parse": "^5.3.5",
     "csv-stringify": "^6.2.4",
+    "fetch-mock": "^9.11.0",
     "gts": "^3.1.1",
     "nyc": "^15.1.0",
     "playwright-test-coverage": "^1.2.8",
@@ -28,7 +29,7 @@
     "start": "node src/index.js",
     "test": "playwright test",
     "pretest": "rm -rf coverage/ .nyc_output/",
-    "coverage": "nyc playwright test tests/ && nyc report --reporter=lcov"
+    "coverage": "cross-env NODE_ENV=test nyc playwright test && cross-env NODE_ENV=test nyc report --reporter=lcov"
   },
   "dependencies": {
     "@types/node-fetch": "^2.6.2",

@@ -6,7 +6,8 @@
         "@playwright/test",
         "playwright",
         "csv-parse",
-        "csv-stringify"
+        "csv-stringify",
+				"fetch-mock"
       ],
       "convertPath": [
         {

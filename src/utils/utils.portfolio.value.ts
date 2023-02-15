@@ -1,88 +1,96 @@
 import {Transform, TransformCallback} from 'stream';
 import {
-  apiConfig,
-  apiResponse,
-  Token,
-  TokenValue,
-  transactionType,
+	apiConfig,
+	apiResponse,
+	Token,
+	TokenValue,
+	transactionType,
 } from './utils.types';
 import fetch from 'node-fetch';
 
 class PortfolioValue extends Transform {
-  private readonly summary: {[key: string]: number};
-  private readonly priceCache: {[key: string]: TokenValue};
-  private apiConfig: apiConfig;
+	private readonly summary: {[key: string]: number};
+	private readonly priceCache: {[key: string]: TokenValue};
+	private apiConfig: apiConfig;
 
-  private jobQueue: Promise<any>[];
-  constructor(api: apiConfig) {
-    super({
-      readableObjectMode: true,
-    });
+	private readonly fetch: any = fetch;
 
-    this.summary = {};
-    this.priceCache = {};
-    this.jobQueue = [];
-    this.apiConfig = api;
-  }
+	private jobQueue: Promise<any>[];
+	constructor(api: apiConfig, apiFetch: any = fetch) {
+		super({
+			readableObjectMode: true,
+		});
 
-  _transform(chunk: string, encoding: BufferEncoding, next: TransformCallback) {
-    this.jobQueue.push(this.computeSummary(JSON.parse(chunk)));
-    next();
-  }
+		this.summary = {};
+		this.priceCache = {};
+		this.jobQueue = [];
+		this.apiConfig = api;
+		this.fetch = apiFetch;
+	}
 
-  _flush(next: TransformCallback) {
-    Promise.all(this.jobQueue).then(() => {
-      return next(null, JSON.stringify(this.summary));
-    });
-  }
+	_transform(chunk: string, encoding: BufferEncoding, next: TransformCallback) {
+		this.jobQueue.push(this.computeSummary(JSON.parse(chunk)));
+		next();
+	}
 
-  async computeSummary(token: Token): Promise<void> {
-    if (!this.summary[token.token]) {
-      this.summary[token.token] = 0;
-    }
+	_flush(next: TransformCallback) {
+		Promise.all(this.jobQueue).then(() => {
+			return next(null, JSON.stringify(this.summary));
+		});
+	}
 
-    return this.getTokenValue(token).then(value => {
-      if (token.transaction_type === transactionType.DEPOSIT) {
-        this.summary[token.token] += value;
-      } else if (token.transaction_type === transactionType.WITHDRAWAL) {
-        this.summary[token.token] -= value;
-      } else {
-        throw new Error('Invalid transaction type');
-      }
-    });
-  }
+	async computeSummary(token: Token): Promise<void> {
+		if (!this.summary[token.token]) {
+			this.summary[token.token] = 0;
+		}
 
-  async getTokenValue(value: Token): Promise<number> {
-    if (!this.priceCache[this.getCacheKey(value)]) {
-      await this.getPrices(value);
-    }
-    return this.priceCache[this.getCacheKey(value)].price * value.amount;
-  }
+		return this.getTokenValue(token).then(value => {
+			if (token.transaction_type === transactionType.DEPOSIT) {
+				this.summary[token.token] += value;
+			} else if (token.transaction_type === transactionType.WITHDRAWAL) {
+				this.summary[token.token] -= value;
+			} else {
+				throw new Error('Invalid transaction type');
+			}
+		});
+	}
 
-  getCacheKey(value: Token): string {
-    return `${value.token}-${value.timestamp}`;
-  }
+	async getTokenValue(value: Token): Promise<number> {
+		if (!this.priceCache[this.getCacheKey(value)]) {
+			const price = await this.getPrices(value);
+			console.log('Fetching prices for', value.token, value.timestamp, price);
+			this.updatePriceCache(value, price);
+		}
+		return (
+			parseFloat(String(this.priceCache[this.getCacheKey(value)].price)) *
+			parseFloat(String(value.amount))
+		);
+	}
 
-  async getPrices(value: Token): Promise<void> {
-    const response = await fetch(this.getApiUrl(value), {
-      headers: {
-        authorization: `Apikey ${this.apiConfig.apiKey}`,
-      },
-    }).catch(err => {
-      throw new Error(err);
-    });
-    const data: apiResponse = await response.json();
+	getCacheKey(value: Token): string {
+		return `${value.token}-${value.timestamp}`;
+	}
 
-    this.priceCache[this.getCacheKey(value)] = {
-      token: value.token,
-      price: data[value.token][this.apiConfig.currency],
-      timestamp: value.timestamp,
-    };
-  }
+	async getPrices(value: Token): Promise<apiResponse> {
+		const response = await this.fetch(this.getApiUrl(value), {
+			headers: {
+				authorization: `Apikey ${this.apiConfig.apiKey}`,
+			},
+		});
+		return response.json();
+	}
 
-  getApiUrl(value: Token): string {
-    return `https://min-api.cryptocompare.com/data/pricehistorical?fsym=${value.token}&tsyms=${this.apiConfig.currency}&ts=${value.timestamp}`;
-  }
+	updatePriceCache(value: Token, data: apiResponse): void {
+		this.priceCache[this.getCacheKey(value)] = {
+			token: value.token,
+			price: data[value.token][this.apiConfig.currency],
+			timestamp: value.timestamp,
+		};
+	}
+
+	getApiUrl(value: Token): string {
+		return `https://min-api.cryptocompare.com/data/pricehistorical?fsym=${value.token}&tsyms=${this.apiConfig.currency}&ts=${value.timestamp}`;
+	}
 }
 
 export default PortfolioValue;
