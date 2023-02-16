@@ -33,6 +33,7 @@ To get the API key, you can register for a free account at [Crypto Compare](http
 - Given a date, we get the portfolio value per token in USD on that date
 - Given a date and a token, we get the portfolio value of that token in USD on that date
 
+
     Usage: portfolio [options]
 
     CLI to get your portfolio value

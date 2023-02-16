@@ -1,41 +1,51 @@
 enum transactionType {
-  DEPOSIT = 'DEPOSIT',
-  WITHDRAWAL = 'WITHDRAWAL',
+	DEPOSIT = 'DEPOSIT',
+	WITHDRAWAL = 'WITHDRAWAL',
 }
 
 type Token = {
-  timestamp: number;
-  transaction_type: transactionType;
-  token: string;
-  amount: number;
+	timestamp: number;
+	transaction_type: transactionType;
+	token: string;
+	amount: number;
 };
 
 type TokenValue = {
-  token: string;
+	token: string;
 
-  price: number;
+	price: number;
 
-  timestamp: number;
+	timestamp: number;
 };
 
 type CMDParams = {
-  token?: string;
-  date?: number;
-  file: string;
+	token?: string;
+	date?: number;
+	file: string;
 
-  apiKey: string;
-  currency: string;
+	apiKey: string;
+	currency: string;
 };
 
 type apiConfig = {
-  apiKey: string;
-  currency: string;
+	apiKey: string;
+	currency: string;
 };
 
 type apiResponse = {
-  [key: string]: {
-    [key: string]: number;
-  };
+	[key: string]: {
+		[key: string]: number;
+	};
 };
 
-export {Token, CMDParams, TokenValue, transactionType, apiConfig, apiResponse};
+type KV = {[key: string]: number};
+
+export {
+	Token,
+	CMDParams,
+	TokenValue,
+	transactionType,
+	apiConfig,
+	apiResponse,
+	KV,
+};
