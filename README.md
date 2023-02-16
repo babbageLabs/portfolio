@@ -33,8 +33,8 @@ To get the API key, you can register for a free account at [Crypto Compare](http
 - Given a date, we get the portfolio value per token in USD on that date
 - Given a date and a token, we get the portfolio value of that token in USD on that date
 
-
-    Usage: portfolio [options]
+```bash
+	Usage: portfolio [options]
 
     CLI to get your portfolio value
     
@@ -46,6 +46,7 @@ To get the API key, you can register for a free account at [Crypto Compare](http
     -k, --key <key>            the API key to use to get the token prices
     -d, --currency <currency>  the currency to use to get the token prices
     -h, --help                 display help for command
+```
 
 # Running the tests
 To run the unit tests, run the following command:
